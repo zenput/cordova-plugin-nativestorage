@@ -11,8 +11,9 @@
 
 		if(reference!=nil)
 		{
+            
 			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-			[defaults removeObjectForKey: reference];
+			[defaults removeObjectForKey:[@"forge_" stringByAppendingString:reference]];
 			BOOL success = [defaults synchronize];
 			if(success) pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK];
 			else pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_ERROR messageAsString:@"Remove has failed"];
@@ -214,7 +215,7 @@
 		if(reference!=nil)
 		{
 			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-			[defaults setObject: aString forKey:reference];
+			[defaults setObject: aString forKey:[@"forge_" stringByAppendingString:reference]];
 			BOOL success = [defaults synchronize];
 			if(success) pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsString:aString];
 			else pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_ERROR messageAsInt:1]; //Write has failed
@@ -236,7 +237,7 @@
 
 		if(reference!=nil)
 		{
-			NSString* aString = [[NSUserDefaults standardUserDefaults] stringForKey:reference];
+			NSString* aString = [[NSUserDefaults standardUserDefaults] stringForKey:[@"forge_" stringByAppendingString:reference]];
 			pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsString:aString];
 			if(aString==nil)
 			{
