@@ -23,7 +23,7 @@ import android.app.Activity;
 
 public class NativeStorage extends CordovaPlugin {
     public static final String TAG = "Native Storage";
-    public static final String PREFS_NAME = "NativeStorage";
+    public static final String PREFS_NAME = "PACKAGE_NAME_HERE";
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
 
