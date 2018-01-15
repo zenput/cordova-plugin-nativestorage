@@ -212,7 +212,7 @@
 		NSString* reference = [command.arguments objectAtIndex:0];
 		NSString* aString = [command.arguments objectAtIndex:1];
 
-		if(reference!=nil)
+		if(reference!=nil && (NsNull*) aString == [NsNull null]) {
 		{
 			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 			[defaults setObject: aString forKey:[@"forge_" stringByAppendingString:reference]];
@@ -248,6 +248,17 @@
 		{
 			pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_ERROR messageAsInt:3]; //Reference was null
 		}
+		[self.commandDelegate sendPluginResult:pluginResult callbackId: command.callbackId];
+	}];
+}
+
+- (void) keys: (CDVInvokedUrlCommand*) command
+{
+	[self.commandDelegate runInBackground:^{
+		CDVPluginResult* pluginResult = nil;
+		NSArray *keys = [[[NSUserDefaults standardUserDefaults] dictionaryRepresentation] allKeys];
+		pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsArray:keys];
+
 		[self.commandDelegate sendPluginResult:pluginResult callbackId: command.callbackId];
 	}];
 }

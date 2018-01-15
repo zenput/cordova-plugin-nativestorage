@@ -19,11 +19,12 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+import java.util.Map;
+
 import android.app.Activity;
 
 public class NativeStorage extends CordovaPlugin {
     public static final String TAG = "Native Storage";
-    public static final String PREFS_NAME = "PACKAGE_NAME_HERE";
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
 
@@ -34,6 +35,7 @@ public class NativeStorage extends CordovaPlugin {
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
         Log.v(TAG, "Init NativeStorage");
+        String PREFS_NAME = preferences.getString("NativeStorageSharedPreferencesName", "NativeStorage");
         sharedPref = cordova.getActivity().getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE);
         editor = sharedPref.edit();
     }
@@ -366,6 +368,21 @@ public class NativeStorage extends CordovaPlugin {
                         }
                     } catch (Exception e) {
                         Log.e(TAG, "getItem failed :", e);
+                        callbackContext.error(e.getMessage());
+                    }
+                }
+            });
+            return true;
+        }
+
+        if (("keys").equals(action)) {
+            cordova.getThreadPool().execute(new Runnable() {
+                public void run() {
+                    try {
+                        Map<String, ?> allEntries = sharedPref.getAll();
+                        callbackContext.success(new JSONArray(allEntries.keySet()));
+                    } catch (Exception e) {
+                        Log.e(TAG, "Get keys failed :", e);
                         callbackContext.error(e.getMessage());
                     }
                 }
