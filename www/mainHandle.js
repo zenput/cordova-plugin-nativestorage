@@ -111,10 +111,11 @@ StorageHandle.prototype.remove = function(reference, success, error) {
   if (inBrowser) {
     try {
       localStorage.removeItem(reference);
-      success();
     } catch (e) {
-      error(e);
+      return error(e);
     }
+
+    success();
   } else {
     this.storageHandlerDelegate(success, error, "NativeStorage", "remove", [reference]);
   }
@@ -131,10 +132,11 @@ StorageHandle.prototype.clear = function(success, error) {
   if (inBrowser) {
     try {
       localStorage.clear();
-      success();
     } catch (e) {
-      error(e);
+      return error(e);
     }
+
+    success();
   } else {
     this.storageHandlerDelegate(success, error, "NativeStorage", "clear", []);
   }
@@ -317,10 +319,11 @@ StorageHandle.prototype.putObject = function(reference, obj, success, error) {
     var obj = {};
     try {
       obj = JSON.parse(data);
-      success(obj);
     } catch (err) {
-      error(err);
+      return error(err);
     }
+
+    success(obj);
   }, error);
 };
 
@@ -335,10 +338,11 @@ StorageHandle.prototype.getObject = function(reference, success, error) {
     var obj = {};
     try {
       obj = JSON.parse(data);
-      success(obj);
     } catch (err) {
-      error(err);
+      return error(err);
     }
+
+    success(obj);
   }, error);
 };
 
@@ -364,10 +368,11 @@ StorageHandle.prototype.setItem = function(reference, obj, success, error) {
   this.storageHandlerDelegate(function(data) {
     try {
       obj = JSON.parse(data);
-      success(obj);
     } catch (err) {
-      error(new NativeStorageError(NativeStorageError.JSON_ERROR, "JS", err));
+      return error(new NativeStorageError(NativeStorageError.JSON_ERROR, "JS", err));
     }
+
+    success(obj);
   }, function(code) {
     error(new NativeStorageError(code, "Native", ""));
   }, "NativeStorage", "setItem", [reference, objAsString]);
@@ -390,10 +395,11 @@ StorageHandle.prototype.getItem = function(reference, success, error) {
     function(data) {
       try {
         obj = JSON.parse(data);
-        success(obj);
       } catch (err) {
-        error(new NativeStorageError(NativeStorageError.JSON_ERROR, "JS", err));
+        return error(new NativeStorageError(NativeStorageError.JSON_ERROR, "JS", err));
       }
+
+      success(obj);
     },
     function(code) {
       error(new NativeStorageError(code, "Native", ""));
@@ -440,10 +446,11 @@ StorageHandle.prototype.setSecretItem = function(reference, obj, encryptConfig, 
   this.storageHandlerDelegate(function(data) {
     try {
       obj = JSON.parse(data);
-      success(obj);
     } catch (err) {
       error(new NativeStorageError(NativeStorageError.JSON_ERROR, "JS", err));
     }
+
+    success(obj);
   }, function(code) {
     error(new NativeStorageError(code, "Native", ""));
   }, "NativeStorage", action, params);
@@ -484,10 +491,11 @@ StorageHandle.prototype.getSecretItem = function(reference, encryptConfig, succe
     function(data) {
       try {
         obj = JSON.parse(data);
-        success(obj);
       } catch (err) {
-        error(new NativeStorageError(NativeStorageError.JSON_ERROR, "JS", err));
+        return error(new NativeStorageError(NativeStorageError.JSON_ERROR, "JS", err));
       }
+
+      success(obj);
     },
     function(code) {
       error(new NativeStorageError(code, "Native", ""));
