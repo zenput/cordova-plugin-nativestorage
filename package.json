@@ -14,7 +14,7 @@
         }
     ],
     "cordova": {
-        "id": "cordova-plugin-nativestorage",
+        "id": "@zenput/cordova-plugin-nativestorage",
         "platforms": [
             "android",
             "ios",
