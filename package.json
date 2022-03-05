@@ -1,6 +1,6 @@
 {
     "name": "@zenput/cordova-plugin-nativestorage",
-    "version": "2.3.1-zp1",
+    "version": "2.3.1-zp2",
     "description": "Native storage of variables in Android, iOS and Windows",
     "author": "Gilles Callebaut <callebaut.gilles@gmail.com>",
     "contributors": [
