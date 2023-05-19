@@ -14,6 +14,7 @@ Cite this plugin:
 @misc{callebautNS,
 author =   {Gilles Callebaut and Alok Rajiv},
 title =    {{NativeStorage - A Cordova Plugin}},
+doi = {10.5281/zenodo.1312615},
 howpublished = {\url{https://github.com/TheCocoaProject/cordova-plugin-nativestorage}},
 }
 ```
@@ -166,6 +167,12 @@ Removing all stored variables:
 NativeStorage.clear(<success-callback>, <error-callback>);
 ```
 
+### iOS specific features
+- App Groups (share data between apps)
+First the suite name must be provided before accessing and retrieving data.
+```javascript
+NativeStorage.initWithSuiteName("suitename");
+```
 ### <a name="example"></a>Example
 ```javascript
 var app = {

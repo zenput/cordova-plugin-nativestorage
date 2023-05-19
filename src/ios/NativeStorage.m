@@ -1,7 +1,40 @@
 #import "NativeStorage.h"
 #import <Cordova/CDVPlugin.h>
 
+@interface NativeStorage()
+@property NSUserDefaults *appGroupUserDefaults;
+@property NSString* suiteName;
+@end
+
 @implementation NativeStorage
+
+- (void) initWithSuiteName: (CDVInvokedUrlCommand*) command
+{
+    [self.commandDelegate runInBackground:^{
+        CDVPluginResult* pluginResult = nil;
+        NSString* aSuiteName = [command.arguments objectAtIndex:0];
+        
+        if(aSuiteName!=nil)
+        {
+            _suiteName = aSuiteName;
+            _appGroupUserDefaults = [[NSUserDefaults alloc] initWithSuiteName:_suiteName];
+	    pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK];
+        }
+        else
+        {
+            pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_ERROR messageAsString:@"Reference or SuiteName was null"];
+        }
+        [self.commandDelegate sendPluginResult:pluginResult callbackId: command.callbackId];
+    }];
+}
+
+- (NSUserDefaults*) getUserDefault {
+	if (_suiteName != nil)
+	{
+        return _appGroupUserDefaults;
+	}
+	return [NSUserDefaults standardUserDefaults];
+}
 
 - (void) remove: (CDVInvokedUrlCommand*) command
 {
@@ -11,8 +44,7 @@
 
 		if(reference!=nil)
 		{
-            
-			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+			NSUserDefaults *defaults = [self getUserDefault];
 			[defaults removeObjectForKey:[@"forge_" stringByAppendingString:reference]];
 			BOOL success = [defaults synchronize];
 			if(success) pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK];
@@ -30,8 +62,8 @@
 {
 	[self.commandDelegate runInBackground:^{
 		CDVPluginResult* pluginResult = nil;
-		[[NSUserDefaults standardUserDefaults] removePersistentDomainForName:[[NSBundle mainBundle] bundleIdentifier]];
-		BOOL success = [[NSUserDefaults standardUserDefaults] synchronize];
+		[[self getUserDefault] removePersistentDomainForName:[[NSBundle mainBundle] bundleIdentifier]];
+		BOOL success = [[self getUserDefault] synchronize];
 		if(success) pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK];
 		else pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_ERROR messageAsString:@"Clear has failed"];
 		[self.commandDelegate sendPluginResult:pluginResult callbackId: command.callbackId];
@@ -47,7 +79,7 @@
 
 		if(reference!=nil)
 		{
-			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+			NSUserDefaults *defaults = [self getUserDefault];
 			[defaults setBool: aBoolean forKey:reference];
 			BOOL success = [defaults synchronize];
 			if(success) pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsBool:aBoolean];
@@ -68,7 +100,7 @@
 
 		if(reference!=nil)
 		{
-			BOOL aBoolean = [[NSUserDefaults standardUserDefaults] boolForKey:reference];
+			BOOL aBoolean = [[self getUserDefault] boolForKey:reference];
 			pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsBool:aBoolean];
 		}
 		else
@@ -88,7 +120,7 @@
 
 		if(reference!=nil)
 		{
-			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+			NSUserDefaults *defaults = [self getUserDefault];
 			[defaults setInteger: anInt forKey:reference];
 			BOOL success = [defaults synchronize];
 			if(success) pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsNSInteger:anInt];
@@ -109,7 +141,7 @@
 
 		if(reference!=nil)
 		{
-			NSInteger anInt = [[NSUserDefaults standardUserDefaults] integerForKey:reference];
+			NSInteger anInt = [[self getUserDefault] integerForKey:reference];
 			pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsNSInteger:anInt];
 		}
 		else
@@ -130,7 +162,7 @@
 
 		if(reference!=nil)
 		{
-			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+			NSUserDefaults *defaults = [self getUserDefault];
 			[defaults setDouble: aDouble forKey:reference];
 			BOOL success = [defaults synchronize];
 			if(success) pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsDouble:aDouble];
@@ -151,7 +183,7 @@
 
 		if(reference!=nil)
 		{
-			double aDouble = [[NSUserDefaults standardUserDefaults] doubleForKey:reference];
+			double aDouble = [[self getUserDefault] doubleForKey:reference];
 			pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsDouble:aDouble];
 		}
 		else
@@ -171,7 +203,7 @@
 
 		if(reference!=nil)
 		{
-			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+			NSUserDefaults *defaults = [self getUserDefault];
 			[defaults setObject: aString forKey:reference];
 			BOOL success = [defaults synchronize];
 			if(success) pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsString:aString];
@@ -193,7 +225,7 @@
 
 		if(reference!=nil)
 		{
-			NSString* aString = [[NSUserDefaults standardUserDefaults] stringForKey:reference];
+			NSString* aString = [[self getUserDefault] stringForKey:reference];
 			pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsString:aString];
 		}
 		else
@@ -218,7 +250,7 @@
 		}
 		else
 		{
-			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+			NSUserDefaults *defaults = [self getUserDefault];
 			[defaults setObject: aString forKey:[@"forge_" stringByAppendingString:reference]];
 			BOOL success = [defaults synchronize];
 			if(success) pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsString:aString];
@@ -237,7 +269,7 @@
 
 		if(reference!=nil)
 		{
-			NSString* aString = [[NSUserDefaults standardUserDefaults] stringForKey:[@"forge_" stringByAppendingString:reference]];
+			NSString* aString = [[self getUserDefault] stringForKey:[@"forge_" stringByAppendingString:reference]];
 			pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsString:aString];
 			if(aString==nil)
 			{
@@ -256,7 +288,7 @@
 {
 	[self.commandDelegate runInBackground:^{
 		CDVPluginResult* pluginResult = nil;
-		NSArray *keys = [[[NSUserDefaults standardUserDefaults] dictionaryRepresentation] allKeys];
+		NSArray *keys = [[[self getUserDefault] dictionaryRepresentation] allKeys];
 		pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsArray:keys];
 
 		[self.commandDelegate sendPluginResult:pluginResult callbackId: command.callbackId];
